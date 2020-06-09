@@ -1,0 +1,30 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+  <id>deployment</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <!--
+  <fileSets>
+    <fileSet>
+      <directory>${project.parent.basedir}/ear-module/target</directory>
+      <outputDirectory>${keycloak.target.deployments}</outputDirectory>
+      <includes>
+        <include>*.ear</include>
+      </includes>
+    </fileSet>    
+  </fileSets>
+  -->
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputFileNameMapping>directgrant-mfa-authenticator-provider-assembly.ear</outputFileNameMapping>
+      <outputDirectory>${keycloak.target.deployments}</outputDirectory>
+      <includes>
+        <include>${pom.groupId}:directgrant-mfa-authenticator-provider-bundle:ear</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>

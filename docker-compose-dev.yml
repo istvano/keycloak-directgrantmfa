@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+  keycloak:
+    image: urbanandco/keycloak-training:10.0.1
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_STATISTICS: all
+      KEYCLOAK_LOGLEVEL: INFO
+      KEYCLOAK_STATIC_MAX_AGE: -1
+      KEYCLOAK_THEME_CACHE: 'false'
+      CUSTOM_LOG_LEVEL: DEBUG
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,address=*:5005,suspend=n
+      REST_API_ENDPOINT: https://www.example.com
+    volumes:
+      - ./src/main/resources/demo-realm.json:/tmp/demo-realm.json
+      - ./src/main/resources/cli:/opt/jboss/startup-scripts
+    ports:
+      - 9990:9990
+      - 5005:5005
+      - 8080:8080
+      - 8443:8443
+    depends_on:
+      - smtp
+
+  smtp:
+    container_name: smtp
+    image: djfarrelly/maildev:1.1.0
+    ports:
+    - "8081:80"
+    - "25"      

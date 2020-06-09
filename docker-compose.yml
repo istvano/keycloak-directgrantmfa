@@ -1,0 +1,91 @@
+version: '3'
+
+volumes:
+  mysql_data:
+    driver: local
+
+services:
+  traefik:
+    image: library/traefik:alpine
+    container_name: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      --logLevel=ERROR
+      --api.dashboard
+      --docker
+      --entrypoints="Name:http Address::80"
+      --defaultentrypoints="http"
+    ports:
+      - 80:80
+      - 3000:8080
+  
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+    # Copy-pasted from https://github.com/docker-library/mariadb/issues/94
+    # healthcheck:
+    #  test: ["CMD", "mysqladmin", "ping", "--silent"]
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9090:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+      ADMINER_DESIGN: nette
+
+  keycloak:
+    image: urbanandco/keycloak-training:10.0.1
+    command: ["-b", "0.0.0.0", "-Dkeycloak.migration.strategy=OVERWRITE_EXISTING"]
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_STATISTICS: all
+      KEYCLOAK_LOGLEVEL: INFO
+      KEYCLOAK_IMPORT: /tmp/demo-realm.json
+      KEYCLOAK_STATIC_MAX_AGE: -1
+      KEYCLOAK_THEME_CACHE: 'false'
+      CUSTOM_LOG_LEVEL: DEBUG
+      REST_API_ENDPOINT: https://www.example.com
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,address=*:5005,suspend=n
+      DB_VENDOR: MYSQL
+      DB_ADDR: mysql
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+#      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+#      JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
+    volumes:
+      - ./src/main/resources/demo-realm.json:/tmp/demo-realm.json
+      - ./src/main/resources/cli:/opt/jboss/startup-scripts
+      - ./assembly/target/keycloak/standalone/deployments:/opt/jboss/keycloak/standalone/deployments
+    ports:
+      - 9990:9990
+      - 5005:5005
+      - 8080:8080
+      - 8443:8443
+    depends_on:
+      - mysql
+      - smtp
+    labels:
+      traefik.enable: true
+      traefik.port: 8080
+      traefik.protocol: http
+      traefik.frontend.rule: Host:localhost
+      traefik.frontend.passHostHeader: true
+      # traefik.backend.loadbalancer.stickiness: true
+
+  smtp:
+    container_name: smtp
+    image: djfarrelly/maildev:1.1.0
+    ports:
+    - "8081:80"
+    - "25"
