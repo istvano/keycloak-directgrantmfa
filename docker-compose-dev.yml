@@ -3,7 +3,7 @@ version: '3'
 services:
 
   keycloak:
-    image: urbanandco/keycloak-training:10.0.1
+    image: urbanandco/keycloak-training:11.0.3
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin

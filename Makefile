@@ -43,7 +43,7 @@ help:
 
 ## Start full stack with MySql
 .PHONY: stack/up
-up:
+stack/up:
 	docker-compose up
 
 ## SSH into keycloak container

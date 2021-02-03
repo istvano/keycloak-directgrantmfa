@@ -43,7 +43,7 @@ services:
       ADMINER_DESIGN: nette
 
   keycloak:
-    image: urbanandco/keycloak-training:10.0.1
+    image: urbanandco/keycloak-training:11.0.3
     command: ["-b", "0.0.0.0", "-Dkeycloak.migration.strategy=OVERWRITE_EXISTING"]
     environment:
       KEYCLOAK_USER: admin

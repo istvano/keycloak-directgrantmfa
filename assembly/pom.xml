@@ -5,7 +5,7 @@
   <parent>
     <groupId>uk.co.urbanandco.keycloak</groupId>
     <artifactId>directgrant-mfa</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
   </parent>
   <packaging>pom</packaging>
   <modelVersion>4.0.0</modelVersion>
@@ -31,7 +31,7 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>3.3.0</version>
-          <configuration>              
+          <configuration>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
                   <descriptor>src/main/resources/deployment.xml</descriptor>
