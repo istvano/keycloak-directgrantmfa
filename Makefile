@@ -49,14 +49,14 @@ stack/up:
 ## SSH into keycloak container
 .PHONY: stack/ssh-kc
 stack/ssh-kc:
-	docker-compose exec keycloak -it bash
+	docker-compose exec keycloak bash
 
 ## -- Development --
 
 ## Start Keycloak in debug mode using h2
 .PHONY: debug
 debug:
-	docker-compose -f docker-compose-dev.yml up
+	docker-compose -f docker-compose-dev.yml up &&  docker-compose rm -fsv
 
 ## Create realm into keycloak
 .PHONY: realm/create

@@ -26,7 +26,7 @@ services:
       - smtp
 
   smtp:
-    container_name: smtp
+#    container_name: smtp
     image: djfarrelly/maildev:1.1.0
     ports:
     - "8081:80"
